@@ -1,0 +1,213 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Navisoft\\AccountManagement\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|d:\\navisoft\\accountmanagement\\accountmanagement\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\services\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\services\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\services\\logerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\services\\logerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\services\\iloggerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\services\\iloggerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\models\\subaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\models\\subaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\models\\savingsaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\models\\savingsaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\models\\investmentaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\models\\investmentaccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\ultils\\inputhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\ultils\\inputhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\services\\transactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\services\\transactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\services\\itransactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\services\\itransactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|D:\\Navisoft\\AccountManagement\\accountmanagement\\models\\logentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A3B4EC0-B3EC-427C-84BA-35672B851A19}|AccountManagement\\AccountManagement.csproj|solutionrelative:accountmanagement\\models\\logentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LogerService.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\LogerService.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Services\\LogerService.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\LogerService.cs",
+              "RelativeToolTip": "AccountManagement\\Services\\LogerService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAiwB8AAAB4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:59:26.971Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Program.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Program.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Program.cs",
+              "RelativeToolTip": "AccountManagement\\Program.cs",
+              "ViewState": "AgIAAKYAAAAAAAAAAAAYwLgAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-17T07:42:12.895Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ILoggerService.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\ILoggerService.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Services\\ILoggerService.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\ILoggerService.cs",
+              "RelativeToolTip": "AccountManagement\\Services\\ILoggerService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:56:56.476Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "InvestmentAccount.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\InvestmentAccount.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Models\\InvestmentAccount.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\InvestmentAccount.cs",
+              "RelativeToolTip": "AccountManagement\\Models\\InvestmentAccount.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:34:47.147Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SubAccount.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\SubAccount.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Models\\SubAccount.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\SubAccount.cs",
+              "RelativeToolTip": "AccountManagement\\Models\\SubAccount.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwB8AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:12:57.479Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SavingsAccount.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\SavingsAccount.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Models\\SavingsAccount.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\SavingsAccount.cs",
+              "RelativeToolTip": "AccountManagement\\Models\\SavingsAccount.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:24:52.562Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "InputHelper.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Ultils\\InputHelper.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Ultils\\InputHelper.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Ultils\\InputHelper.cs",
+              "RelativeToolTip": "AccountManagement\\Ultils\\InputHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T07:16:20.858Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AccountService.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\AccountService.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Services\\AccountService.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\AccountService.cs",
+              "RelativeToolTip": "AccountManagement\\Services\\AccountService.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAzwA0AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T05:54:06.61Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ITransactionService.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\ITransactionService.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Services\\ITransactionService.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\ITransactionService.cs",
+              "RelativeToolTip": "AccountManagement\\Services\\ITransactionService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABNAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T06:41:44.193Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TransactionService.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\TransactionService.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Services\\TransactionService.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Services\\TransactionService.cs",
+              "RelativeToolTip": "AccountManagement\\Services\\TransactionService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI4AAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T06:43:34.751Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Account.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\Account.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Models\\Account.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\Account.cs",
+              "RelativeToolTip": "AccountManagement\\Models\\Account.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:37:21.184Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "LogEntry.cs",
+              "DocumentMoniker": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\LogEntry.cs",
+              "RelativeDocumentMoniker": "AccountManagement\\Models\\LogEntry.cs",
+              "ToolTip": "D:\\Navisoft\\AccountManagement\\AccountManagement\\Models\\LogEntry.cs",
+              "RelativeToolTip": "AccountManagement\\Models\\LogEntry.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwAwAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:38:53.633Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
