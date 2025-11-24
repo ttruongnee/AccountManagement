@@ -1,7 +1,0 @@
-D:\Navisoft\AccountManagement\AccountManagement\bin\Debug\AccountManagement.exe.config
-D:\Navisoft\AccountManagement\AccountManagement\bin\Debug\AccountManagement.exe
-D:\Navisoft\AccountManagement\AccountManagement\bin\Debug\AccountManagement.pdb
-D:\Navisoft\AccountManagement\AccountManagement\obj\Debug\AccountManagement.csproj.AssemblyReference.cache
-D:\Navisoft\AccountManagement\AccountManagement\obj\Debug\AccountManagement.csproj.CoreCompileInputs.cache
-D:\Navisoft\AccountManagement\AccountManagement\obj\Debug\AccountManagement.exe
-D:\Navisoft\AccountManagement\AccountManagement\obj\Debug\AccountManagement.pdb
