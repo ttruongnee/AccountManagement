@@ -64,14 +64,32 @@ namespace AccountManagement.Services
             }
 
             //kiểm tra số dư của tất cả tài khoản con của tài khoản muốn xoá, nếu có tài khoản con > 0 thì không xoá được
-            foreach (var s in acc.SubAccounts)
+            //foreach (var s in acc.SubAccounts)
+            //{
+            //    if (s.Balance > 0)
+            //    {
+            //        message = $"Không thể xóa: tài khoản con {s.SubId} còn tiền.";
+            //        _logger.Log(new LogEntry(accountId, s.SubId, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
+            //        return false;
+            //    }
+            //}
+
+            //dùng any để kiểm tra số dư tài khoản con
+            //bool check = acc.SubAccounts.Any(s => s.Balance > 0);
+            //if (check)
+            //{
+            //    message = $"Không thể xóa: tài khoản con còn tiền.";
+            //    _logger.Log(new LogEntry(accountId, null, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
+            //    return false;
+            //}
+
+            //dùng first or default để kiểm tra số dư tài khoản con
+            var check = acc.SubAccounts.FirstOrDefault(s => s.Balance > 0);
+            if (check != null)
             {
-                if (s.Balance > 0)
-                {
-                    message = $"Không thể xóa: tài khoản con {s.SubId} còn tiền.";
-                    _logger.Log(new LogEntry(accountId, s.SubId, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
-                    return false;
-                }
+                message = $"Không thể xóa: tài khoản con {check.Name} còn tiền.";
+                _logger.Log(new LogEntry(accountId, check.SubId, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
+                return false;
             }
 
             //xoá và kiểm tra trạng thái cho chắc chắn

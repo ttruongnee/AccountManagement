@@ -42,7 +42,8 @@ namespace AccountManagement.Services
 
                 //dùng .Find để tìm và lấy ra phần tử thoả mãn điều kiện trong ngoặc
                 //truyền vào StringComparison.OrdinalIgnoreCase trong Equals để so sánh không phân biệt hoa thường
-                var sub = acc.SubAccounts.Find(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
+                //var sub = acc.SubAccounts.Find(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
+                var sub = acc.SubAccounts.FirstOrDefault(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
                 if (sub == null) 
                 {
                     message = "Tài khoản con không tồn tại."; 
