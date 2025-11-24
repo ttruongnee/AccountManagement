@@ -56,6 +56,7 @@
     <Compile Include="Services\ITransactionService.cs" />
     <Compile Include="Services\LogerService.cs" />
     <Compile Include="Services\TransactionService.cs" />
+    <Compile Include="Ultils\AccountHelpers.cs" />
     <Compile Include="Ultils\InputHelper.cs" />
   </ItemGroup>
   <ItemGroup>

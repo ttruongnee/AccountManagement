@@ -5,9 +5,15 @@ using System.Globalization;
 using AccountManagement.Ultils;
 using System.Linq;
 using System.Security.Principal;
+using System.Collections.Generic;
 
 namespace AccountManagement
 {
+    class MenuItem { 
+        public int Key { get; set; }
+        public string Description { get; set; }
+        public Action Action { get; set; }
+    }
     class Program
     {
         static void Main()
@@ -38,55 +44,41 @@ namespace AccountManagement
             accountService.CreateMainAccount("VNPAYY", out _);
             accountService.CreateSubAccount("VNPAYY", new SavingsAccount("VNPAYDT", 700_000), out _);
             accountService.CreateSubAccount("VNPAYY", new InvestmentAccount("VNPAYTK", 5_000_000), out _);
-            accountService.CreateSubAccount("VNPAYY", new InvestmentAccount("VNPAYDT2", 100_000), out _);
+            accountService.CreateSubAccount("VNPAYY", new InvestmentAccount("VNDT2", 100_000), out _);
 
             accountService.CreateMainAccount("VIETCOM", out _);
             accountService.CreateSubAccount("VIETCOM", new SavingsAccount("VIETCOMDT", 100_000), out _);
             accountService.CreateSubAccount("VIETCOM", new InvestmentAccount("VIETCOMTK", 500_000), out _);
             accountService.CreateSubAccount("VIETCOM", new InvestmentAccount("VIETCOMDT2", 600_000), out _);
 
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("====== QUẢN LÝ TÀI KHOẢN ======");
-                Console.WriteLine("1. Xem tài khoản");
-                Console.WriteLine("2. Tạo tài khoản chính");
-                Console.WriteLine("3. Tạo tài khoản con");
-                Console.WriteLine("4. Xóa tài khoản chính");
-                Console.WriteLine("5. Nạp tiền");
-                Console.WriteLine("6. Rút tiền");
-                Console.WriteLine("7. Tính lãi (hiển thị)");
-                Console.WriteLine("8. Thanh toán lãi cho 1 tài khoản con");
-                Console.WriteLine("9. Xem lịch sử hoạt động");
-                Console.WriteLine("10. Xếp hạng account");
-                Console.WriteLine("0. Thoát");
-                int choice = InputHelper.ReadIntInRange("Chọn: ", 0, 10);
-                Console.WriteLine();
 
-                switch (choice)
-                {
-                    case 1:
-                        //hiển thị ra toàn bộ tài khoản
-                        PrintAllAccounts(accountService);
-                        break;
-                    case 2:
-                        {
-                            //tạo tài khoản chính
-                            string id = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
-                            if (accountService.CreateMainAccount(id, out var msg))
-                                Console.WriteLine(msg);
-                            else Console.WriteLine(msg);
-                        }
-                        break;
-                    case 3:
-                        {
-                            //tạo tài khoản con
+            var menuItems = new List<MenuItem>
+            {
+                new MenuItem { Key = 1, Description = "Xem tài khoản", Action = () => PrintAllAccounts(accountService) },
+                new MenuItem 
+                { 
+                    Key = 2, 
+                    Description = "Tạo tài khoản chính", 
+                    Action = () => 
+                    {
+                        string id = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
+                        if (accountService.CreateMainAccount(id, out var msg))
+                            Console.WriteLine(msg);
+                        else Console.WriteLine(msg);
+                    } 
+                },
+                new MenuItem { 
+                    Key = 3, 
+                    Description = "Tạo tài khoản con", 
+                    Action = () => 
+                    { 
+                        //tạo tài khoản con
                             string mainId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
                             var acc = accountService.GetAccount(mainId);
                             if (acc == null)
                             {
                                 Console.WriteLine("Tài khoản chính không tồn tại.");
-                                break;
+                                return;
                             }
 
                             string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
@@ -105,96 +97,122 @@ namespace AccountManagement
 
                             accountService.CreateSubAccount(mainId, sub, out var msg);
                             Console.WriteLine(msg);
-                        }
-                        break;
-                    case 4:
+                    }
+                },
+                new MenuItem { 
+                    Key = 4, 
+                    Description = "Xóa tài khoản chính", 
+                    Action = () => 
+                    { 
+                        //xoá tài khoản chính
+                        string id = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính cần xóa: ");
+                        accountService.DeleteMainAccount(id, out var msg);
+                        Console.WriteLine(msg);
+                    } 
+                },
+                new MenuItem { 
+                    Key = 5, 
+                    Description = "Nạp tiền", 
+                    Action = () => 
+                    {
+                        //nạp tiền
+                        string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
+                        var acc = accountService.GetAccount(accId);
+                        if (acc == null)
                         {
-                            //xoá tài khoản chính
-                            string id = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính cần xóa: ");
-                            accountService.DeleteMainAccount(id, out var msg);
-                            Console.WriteLine(msg);
+                            Console.WriteLine("Tài khoản chính không tồn tại.");
+                            return;
                         }
-                        break;
-                    case 5:
+
+                        string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
+                        double amount = InputHelper.ReadPositiveDouble("Nhập số tiền nạp: ");
+
+                        transactionService.Deposit(accId, subId, amount, out var msg);
+                        Console.WriteLine(msg);
+                    } 
+                },
+                new MenuItem { 
+                    Key = 6, 
+                    Description = "Rút tiền", 
+                    Action = () => 
+                    {
+                        //rút tiền
+                        string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
+                        var acc = accountService.GetAccount(accId);
+                        if (acc == null)
                         {
-                            //nạp tiền
-                            string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
-                            var acc = accountService.GetAccount(accId);
-                            if (acc == null)
-                            {
-                                Console.WriteLine("Tài khoản chính không tồn tại.");
-                                break;
-                            }
-
-                            string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
-                            double amount = InputHelper.ReadPositiveDouble("Nhập số tiền nạp: ");
-
-                            transactionService.Deposit(accId, subId, amount, out var msg);
-                            Console.WriteLine(msg);
+                            Console.WriteLine("Tài khoản chính không tồn tại.");
+                            return;
                         }
-                        break;
-                    case 6:
+
+                        string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
+                        double amount = InputHelper.ReadPositiveDouble("Nhập số tiền rút: ");
+
+                        transactionService.Withdraw(accId, subId, amount, out var msg);
+                        Console.WriteLine(msg);
+                    } 
+                },
+                new MenuItem { 
+                    Key = 7, 
+                    Description = "Tính lãi (hiển thị)", 
+                    Action = () =>
+                    {
+                        //hiển thị tài khoản kèm lãi
+                        var dict = accountService.GetAllAccounts();
+                        if (dict.Count == 0)
                         {
-                            //rút tiền
-                            string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
-                            var acc = accountService.GetAccount(accId);
-                            if (acc == null)
-                            {
-                                Console.WriteLine("Tài khoản chính không tồn tại.");
-                                break;
-                            }
-
-                            string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
-                            double amount = InputHelper.ReadPositiveDouble("Nhập số tiền rút: ");
-
-                            transactionService.Withdraw(accId, subId, amount, out var msg);
-                            Console.WriteLine(msg);
+                            Console.WriteLine("Không có tài khoản.");
+                            return;
                         }
-                        break;
-                    case 7:
+                        foreach (var account in dict)
                         {
-                            //hiển thị tài khoản kèm lãi
-                            var dict = accountService.GetAllAccounts();
-                            if (dict.Count == 0)
+                            Console.WriteLine($"\n=== Tài khoản chính: {account.Key} ===");
+                            foreach (var s in account.Value.SubAccounts)
                             {
-                                Console.WriteLine("Không có tài khoản.");
-                                break;
-                            }
-                            foreach (var account in dict)
-                            {
-                                Console.WriteLine($"\n=== Tài khoản chính: {account.Key} ===");
-                                foreach (var s in account.Value.SubAccounts)
-                                {
-                                    Console.WriteLine($"{s.SubId.ToUpper()} | Loại: {s.Name} | Số dư: {s.Balance.ToString("N0", new CultureInfo("vi-VN"))}đ | Lãi ({s.InterestRate}%): {s.GetInterest().ToString("N0", new CultureInfo("vi-VN"))}đ");
-                                }
+                                Console.WriteLine($"{s.SubId.ToUpper()}\t | Loại: {s.Name}\t | Số dư: {s.Balance.ToString("N0", new CultureInfo("vi-VN"))}đ\t | Lãi ({s.InterestRate}%): {s.GetInterest().ToString("N0", new CultureInfo("vi-VN"))}đ");
                             }
                         }
-                        break;
-                    case 8:
+                    }  
+                    
+                },
+                new MenuItem { 
+                    Key = 8, 
+                    Description = "Thanh toán lãi cho 1 tài khoản con", 
+                    Action = () => 
+                    {
+                        //thanh toán lãi
+                        string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
+                        var acc = accountService.GetAccount(accId);
+                        if (acc == null)
                         {
-                            //thanh toán lãi
-                            string accId = InputHelper.ReadNonEmpty("Nhập ID tài khoản chính: ");
-                            var acc = accountService.GetAccount(accId);
-                            if (acc == null)
-                            {
-                                Console.WriteLine("Tài khoản chính không tồn tại.");
-                                break;
-                            }
-                            string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
-
-                            transactionService.PayInterest(accId, subId, out var msg);
-                            Console.WriteLine(msg);
+                            Console.WriteLine("Tài khoản chính không tồn tại.");
+                            return;
                         }
-                        break;
-                    case 9:
-                        logger.PrintAll();
-                        break;
-                    case 10:
-                        AccountRating(accountService);
-                        break;
-                    case 0:
-                        return;
+                        string subId = InputHelper.ReadNonEmpty("Nhập ID tài khoản con: ");
+
+                        transactionService.PayInterest(accId, subId, out var msg);
+                        Console.WriteLine(msg);
+                    } 
+                },
+                new MenuItem { Key = 9, Description = "Xem lịch sử hoạt động", Action = () => logger.PrintAll() },
+                new MenuItem { Key = 10, Description = "Xếp hạng account", Action = () => AccountRating(accountService) },
+                new MenuItem { Key = 0, Description = "Thoát", Action = () => Environment.Exit(0) }
+            };
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("====== QUẢN LÝ TÀI KHOẢN ======");
+                foreach (var item in menuItems)
+                {
+                    Console.WriteLine($"{item.Key}. {item.Description}");
                 }
+
+                int choice = InputHelper.ReadIntInRange("Chọn: ", 0, 10);
+                Console.WriteLine();
+
+                var selected = menuItems.FirstOrDefault(m => m.Key == choice);
+                selected?.Action.Invoke();
 
                 Console.WriteLine("\nNhấn phím bất kỳ để tiếp tục...");
                 Console.ReadKey();
@@ -218,34 +236,31 @@ namespace AccountManagement
 
         static void AccountRating(IAccountService accountService)
         {
+            var subMenu = new List<MenuItem>
+            {
+                new MenuItem { Key = 1, Description = "Xếp hạng tài khoản theo số dư", Action = () => RankAccountsByBalance(accountService) },
+                new MenuItem { Key = 2, Description = "Các tài khoản số dư dưới 1 triệu", Action = () => Under1Million(accountService) },
+                new MenuItem { Key = 3, Description = "Top 3 tài khoản có số dư thanh toán lớn nhất", Action = () => Top3(accountService) },
+                new MenuItem { Key = 4, Description = "Tổng số dư tài khoản đầu tư của tất cả tài khoản", Action = () => TotalBalanceOfInvestmentAccounts(accountService) },
+                new MenuItem { Key = 0, Description = "Thoát", Action = () => { } }
+
+            };
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("1. Xếp hạng tài khoản theo số dư");
-                Console.WriteLine("2. Các tài khoản số dư dưới 1 triệu");
-                Console.WriteLine("3. Top 3 tài khoản có số dư thanh toán lớn nhất");
-                Console.WriteLine("4. Tổng số dư tài khoản đầu tư của tất cả tài khoản");
-                Console.WriteLine("0. Thoát");
+                foreach (var item in subMenu)
+                {
+                    Console.WriteLine($"{item.Key}. {item.Description}");
+                }
 
                 int choice = InputHelper.ReadIntInRange("Chọn: ", 0, 4);
+                if (choice == 0) return;
                 Console.WriteLine();
-                switch (choice)
-                {
-                    case 1:
-                        RankAccountsByBalance(accountService);
-                        break;
-                    case 2:
-                        Under1Million(accountService);
-                        break;
-                    case 3:
-                        Top3(accountService);
-                        break;
-                    case 4:
-                        TotalBalanceOfInvestmentAccounts(accountService);
-                        break;
-                    case 0:
-                        return;
-                }
+
+
+                var selected = subMenu.FirstOrDefault(x => x.Key == choice);
+                selected?.Action.Invoke()
+                    ;
                 Console.WriteLine("\nNhấn phím bất kỳ để tiếp tục...");
                 Console.ReadKey();
                 Console.Clear();
@@ -256,11 +271,7 @@ namespace AccountManagement
         {
             var dict = accountService.GetAllAccounts();
             if (dict.Count == 0) { return; }
-            var result = dict.Select(acc => new
-            {
-                MainId = acc.Key,
-                TotalBalance = acc.Value.SubAccounts.Sum(s => s.Balance)
-            })
+            var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
                 .OrderByDescending(d => d.TotalBalance);
 
             foreach (var item in result)
@@ -273,11 +284,7 @@ namespace AccountManagement
         {
             var dict = accountService.GetAllAccounts();
             if (dict.Count == 0) { return; }
-            var result = dict.Select(acc => new
-            {
-                MainId = acc.Key,
-                TotalBalance = acc.Value.SubAccounts.Sum(s => s.Balance)
-            })
+            var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
                 .Where(acc => acc.TotalBalance < 1_000_000);
             
             foreach (var item in result)
@@ -290,11 +297,7 @@ namespace AccountManagement
         {
             var dict = accountService.GetAllAccounts();
             if(dict.Count == 0) {return; }
-            var result = dict.Select(acc => new
-            {
-                MainId = acc.Key,
-                TotalBalance = acc.Value.SubAccounts.Sum(s => s.Balance)
-            })
+            var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
                 .OrderByDescending(acc => acc.TotalBalance)
                 .Take(3);
 
@@ -313,6 +316,6 @@ namespace AccountManagement
                 .Sum(acc => acc.Balance);
 
             Console.WriteLine($"Tổng số dư tài khoản đầu tư của tất cả tài khoản là {result.ToString("N0", new CultureInfo("vi-VN"))}đ");
-        }
+        }        
     }
 }
