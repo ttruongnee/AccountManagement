@@ -8,19 +8,21 @@ namespace AccountManagement.Models
 {
     public class LogEntry
     {
+        public decimal Log_Id { get; }
         public DateTime Time { get; } = DateTime.Now;
-        public string AccountId { get; }
+        public string Account_Id { get; }
         //string thì ngầm hiểu là có thể null nên không cần ? ở đầu
-        public string SubId { get; }
+        public decimal? Sub_Id { get; }
         public string Action { get; }
         public double? Amount { get; }
         public bool Success { get; }
         public string Note { get; }
+        public LogEntry() { }
 
-        public LogEntry(string accountId, string subId, string action, double? amount, bool success, string note = "")
+        public LogEntry(string accountId, decimal? subId, string action, double? amount, bool success, string note)
         {
-            AccountId = accountId;
-            SubId = subId;
+            Account_Id = accountId;
+            Sub_Id = subId;
             Action = action;
             Amount = amount;
             Success = success;

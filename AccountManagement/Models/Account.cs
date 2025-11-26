@@ -8,13 +8,12 @@ namespace AccountManagement.Models
 {
     public class Account
     {
-        public string AccountId { get; }
-        public List<SubAccount> SubAccounts { get; }
+        public string Account_Id { get;}
 
+        public Account() { }
         public Account(string accountId)
         {
-            AccountId = (accountId ?? string.Empty).Trim().ToLower();
-            SubAccounts = new List<SubAccount>();
+            Account_Id = (accountId ?? string.Empty).Trim().ToUpper();
         }
     }
 }

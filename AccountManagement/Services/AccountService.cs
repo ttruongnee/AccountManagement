@@ -1,5 +1,8 @@
 ﻿using AccountManagement.Models;
+using AccountManagement.Repositories;
+using Oracle.ManagedDataAccess.Client;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,132 +12,140 @@ namespace AccountManagement.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly Dictionary<string, Account> _accounts = new Dictionary<string, Account>();
-        private readonly ILoggerService _logger;
-        public AccountService(ILoggerService logger)
+        private readonly AccountRepository _accountRepo;
+        private readonly SubAccountRepository _subAccountRepo;
+        private readonly LogEntryRepository _loggerRepo;
+        public AccountService(AccountRepository accountRepo, SubAccountRepository subAccountRepository, LogEntryRepository logEntryRepo)
         {
-            _logger = logger;
+            _accountRepo = accountRepo;
+            _subAccountRepo = subAccountRepository;
+            _loggerRepo = logEntryRepo;
         }
 
         //trả về 1 dictionary chỉ đọc chứa các tài khoản (chính)
-        public IReadOnlyDictionary<string, Account> GetAllAccounts() => _accounts;
+        public IReadOnlyDictionary<string, Account> GetAllAccounts() => _accountRepo.GetAllAccounts();
 
-        //nhận vào id, kiểm tra nếu 
-        public Account GetAccount(string accountId)
+
+        public Account GetAccountById(string accountId)
         {
-            if (string.IsNullOrWhiteSpace(accountId)) return null;
-
-            //tìm key trong _accounts, nếu tìm thấy thì gán đối tượng tương ứng cho acc, không thì gán null
-            //không ném lỗi khi key không tồn tại -> an toàn hơn _accounts[key]
-            _accounts.TryGetValue(accountId.Trim().ToLower(), out var acc); //trả ra kiểu bool 
-            return acc;
+            if (string.IsNullOrWhiteSpace(accountId.ToUpper())) return null;
+            return _accountRepo.GetAccountById(accountId.ToUpper());
         }
 
+
         //tạo tài khoản chính, trả về kiểu bool và message thông báo
-        public bool CreateMainAccount(string accountId, out string message)
+        public bool CreateAccount(string accountId, out string message)
         {
-            //message = "";
             if (string.IsNullOrWhiteSpace(accountId))
             {
                 message = "Mã tài khoản chính không hợp lệ.";
                 return false;
             }
-            accountId = accountId.Trim().ToLower();
-            if (_accounts.ContainsKey(accountId))
+            accountId = accountId.Trim().ToUpper();
+
+            try
             {
-                message = "Tài khoản chính đã tồn tại.";
+                var result = _accountRepo.CreateAccount(new Account(accountId));
+                if (!result)
+                {
+                    message = "Không thể tạo tài khoản chính.";
+                    return false;
+                }
+                _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, "Tạo tài khoản chính thành công"));
+
+                message = "Tạo tài khoản chính thành công.";
+                return true;
+            }
+            catch (OracleException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 1:
+                        message = "Tài khoản đã tồn tại.";
+                        return false;
+
+                    case 1400:
+                        message = "Thiếu dữ liệu yêu cầu (NOT NULL).";
+                        return false;
+
+                    case 2291:
+                        message = "Tài khoản cha không tồn tại.";
+                        return false;
+
+                    case 904:
+                        message = "Tên cột không hợp lệ.";
+                        return false;
+
+                    default:
+                        message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = $"Lỗi hệ thống: {ex.Message}";
                 return false;
             }
-            var acc = new Account(accountId);
-            _accounts.Add(accountId, acc);
-            _logger.Log(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true));
-            message = "Tạo tài khoản chính thành công.";
-            return true;
+
         }
 
         //xoá tài khoản chính khi truyền vào id tài khoản, trả về kiểu bool và message thông báo
-        public bool DeleteMainAccount(string accountId, out string message)
+        public bool DeleteAccount(string accountId, out string message)
         {
-            message = "";
-            var acc = GetAccount(accountId);
+            var acc = _accountRepo.GetAccountById(accountId);
             if (acc == null)
             {
                 message = "Không tồn tại tài khoản.";
                 return false;
             }
 
-            //kiểm tra số dư của tất cả tài khoản con của tài khoản muốn xoá, nếu có tài khoản con > 0 thì không xoá được
-            //foreach (var s in acc.SubAccounts)
-            //{
-            //    if (s.Balance > 0)
-            //    {
-            //        message = $"Không thể xóa: tài khoản con {s.SubId} còn tiền.";
-            //        _logger.Log(new LogEntry(accountId, s.SubId, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
-            //        return false;
-            //    }
-            //}
-
-            //dùng any để kiểm tra số dư tài khoản con
-            //bool check = acc.SubAccounts.Any(s => s.Balance > 0);
-            //if (check)
-            //{
-            //    message = $"Không thể xóa: tài khoản con còn tiền.";
-            //    _logger.Log(new LogEntry(accountId, null, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
-            //    return false;
-            //}
-
-            //dùng first or default để kiểm tra số dư tài khoản con
-            var check = acc.SubAccounts.FirstOrDefault(s => s.Balance > 0);
-            if (check != null)
+            var subAccounts = _subAccountRepo.GetByAccountId(accountId);
+            if (subAccounts != null)
             {
-                message = $"Không thể xóa: tài khoản con {check.Name} còn tiền.";
-                _logger.Log(new LogEntry(accountId, check.SubId, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
-                return false;
+                //kiểm tra số dư của tất cả tài khoản con của tài khoản muốn xoá, nếu có tài khoản con > 0 thì không xoá được
+                var blockedSub = subAccounts.Values.FirstOrDefault(s => s.Balance > 0);
+                if (blockedSub != null)
+                {
+                    message = $"Không thể xóa: tài khoản con {blockedSub.Sub_Id} còn tiền.";
+                    _loggerRepo.CreateLog(new LogEntry(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
+                    return false;
+                }
             }
 
-            //xoá và kiểm tra trạng thái cho chắc chắn
-            bool removed = _accounts.Remove(acc.AccountId);
-            if (removed)
+
+            try
             {
-                _logger.Log(new LogEntry(acc.AccountId, null, "Xoá tài khoản chính", null, true));
-                message = "Xoá tài khoản thành công.";
+                var result = _accountRepo.DeleteAccount(accountId);
+                if (!result)
+                {
+                    message = $"Xoá tài khoản {accountId} thất bại.";
+                    _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
+                    return false;
+                }
+                
+                message = $"Xoá tài khoản {accountId} thành công.";
+                _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, true, message));
+                
                 return true;
             }
-
-            message = "Xoá thất bại.";
-            _logger.Log(new LogEntry(acc.AccountId, null, "Xoá tài khoản chính", null, false));
-            return false;
-        }
-
-        //tạo tài khoản con, truyền vào id tài khoản chính, tài khoản con; trả về kiểu bool và message thông báo
-        public bool CreateSubAccount(string accountId, SubAccount subAccount, out string message)
-        {
-            message = "";
-            var acc = GetAccount(accountId);
-            if (acc == null)
+            catch (OracleException ex)
             {
-                message = "Không tồn tại tài khoản chính.";
-                return false;
-            }
+                switch (ex.Number)
+                { 
+                    case 2292:
+                        message = "Không thể xóa tài khoản: còn tài khoản con liên quan (FK constraint).";
+                        return false;
 
-            if (subAccount == null)
-            {
-                message = "Tài khoản con hợp lệ chưa được cung cấp.";
-                return false;
+                    default:
+                        message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
+                        return false;
+                }
             }
-            //.Any trả về true nếu tồn tại ít nhất 1 phần tử thoả mãn điều kiện trong ngoặc (LINQ)
-            //truyền vào StringComparison.OrdinalIgnoreCase trong Equals để so sánh không phân biệt hoa thường
-            if (acc.SubAccounts.Any(s => s.SubId.Equals(subAccount.SubId, StringComparison.OrdinalIgnoreCase)))
+            catch (Exception ex)
             {
-                message = "Tài khoản con đã tồn tại.";
-                _logger.Log(new LogEntry(accountId, subAccount.SubId, "Tạo tài khoản con", null, false, "Trùng ID"));
+                message = $"Lỗi hệ thống: {ex.Message}";
                 return false;
-            }
-
-            acc.SubAccounts.Add(subAccount);
-            _logger.Log(new LogEntry(accountId, subAccount.SubId, "Tạo tài khoản con", null, true));
-            message = "Tạo tài khoản con thành công.";
-            return true;
+            }           
         }
     }
 }

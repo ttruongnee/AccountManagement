@@ -13,15 +13,12 @@ namespace AccountManagement.Services
         IReadOnlyDictionary<string, Account> GetAllAccounts();
         
         //tạo tài khoản chính
-        bool CreateMainAccount(string accountId, out string message);
+        bool CreateAccount(string accountId, out string message);
 
         //xoá tài khoản chính
-        bool DeleteMainAccount(string accountId, out string message);
-
-        //tạo tài khoản con
-        bool CreateSubAccount(string accountId, SubAccount subAccount, out string message);
+        bool DeleteAccount(string accountId, out string message);
 
         //lấy ra tài khoản chính
-        Account GetAccount(string accountId);
+        Account GetAccountById(string accountId);
     }
 }

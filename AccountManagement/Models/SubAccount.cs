@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace AccountManagement.Models
 {
-    public abstract class SubAccount
+    public class SubAccount
     {
-        public string SubId { get; }
-        public abstract string Name { get; }
+        public int Sub_Id { get; }
+        public string Account_Id { get; }
+        public string Name { get; }
+        public string Type { get; }
+        public double InterestRate { get; }
+
         private double _balance;
         public double Balance
         {
@@ -17,17 +21,18 @@ namespace AccountManagement.Models
             protected set => _balance = double.IsNaN(value) || value < 0 ? 0 : value;
         }
 
-        //khởi tạo 
-        protected SubAccount(string subId, double initialBalance = 0)
-        {
-            // ?? dùng để gán giá trị mặc định nếu biến null
-            // nếu subId không null thì gán SubId = subId, nếu subId null thì gán bằng string.Emplty ("")
-            SubId = (subId ?? string.Empty).Trim().ToLower();
-            Balance = initialBalance;
-        }
+        public SubAccount() { }
 
-        //mỗi loại tài khoản sẽ phải override interest rate
-        public abstract double InterestRate { get; }
+        //khởi tạo 
+        public SubAccount(string account_Id, string name, string type, double initialBalance = 0)
+        {
+            Account_Id = account_Id;            
+            Name = name.ToUpper();
+            Type = type;
+            Balance = initialBalance;
+            InterestRate = Type.Equals("TK") ? 4.7 : 5.1;
+
+        }
 
         public double GetInterest() => Balance * InterestRate / 100;
 
