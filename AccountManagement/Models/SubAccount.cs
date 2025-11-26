@@ -36,13 +36,13 @@ namespace AccountManagement.Models
 
         public double GetInterest() => Balance * InterestRate / 100;
 
-        public virtual void Deposit(double amount)
+        public void Deposit(double amount)
         {
             if (amount <= 0) throw new ArgumentException("Số tiền nạp phải lớn hơn 0");
             Balance += amount;
         }
 
-        public virtual void Withdraw(double amount)
+        public void Withdraw(double amount)
         {
             if (amount <= 0) throw new ArgumentException("Số tiền muốn rút phải lớn hơn 0");
             if (Balance < amount) throw new InvalidOperationException("Số tiền muốn rút lớn hơn số tiền đang có");

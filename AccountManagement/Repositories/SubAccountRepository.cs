@@ -50,7 +50,7 @@ namespace AccountManagement.Repositories
         {
             using (var conn = OracleDb.GetConnection())
             {
-                string sql = "update sub_accounts set name = :Name, balance = :Balance, type = :Type";
+                string sql = "update sub_accounts set name = :Name, balance = :Balance, type = :Type where sub_id = :Sub_Id";
                 var result = conn.Execute(sql, subAccount);
 
                 return result > 0;

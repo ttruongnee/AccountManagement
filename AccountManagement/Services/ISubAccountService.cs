@@ -26,10 +26,10 @@ namespace AccountManagement.Services
 
 
         //gửi tiền
-        bool Deposit(string accountId, decimal subId, double amount, out string message);
+        bool Deposit(decimal subId, double amount, out string message);
         
         //rút tiền
-        bool Withdraw(string accountId, decimal subId, double amount, out string message);
+        bool Withdraw(decimal subId, double amount, out string message);
 
         //trả lãi
         bool PayInterest(string accountId, decimal subId, out string message);

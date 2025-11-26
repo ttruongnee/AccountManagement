@@ -3,6 +3,7 @@ using AccountManagement.Repositories;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,18 +24,21 @@ namespace AccountManagement.Services
             _loggerRepo = logEntryRepository;
         }
 
+        //lấy ra dict subaccount từ accountid
         public Dictionary<decimal, SubAccount> GetByAccountId(string accountId)
         {
             if (string.IsNullOrWhiteSpace(accountId)) return null;
             return _subAccountRepo.GetByAccountId(accountId);
         }
 
+        //lấy ra subaccount theo id
         public SubAccount GetBySubAccountId(decimal sub_id)
         {
             if (sub_id <= 0) return null;
             return _subAccountRepo.GetBySubAccountId(sub_id);
         }
 
+        //kiểm tra subaccount có tồn tại hay không
         public bool CheckSubAccountExists(decimal subId, out string message)
         {
             var sub = _subAccountRepo.GetBySubAccountId(subId);
@@ -49,6 +53,7 @@ namespace AccountManagement.Services
             return true;
         }
 
+        //lấy ra type của tài khoản con để hiển thị
         public string GetSubAccountType(string type)
         {
             if (string.IsNullOrWhiteSpace(type)) return type;
@@ -57,6 +62,7 @@ namespace AccountManagement.Services
             return "Tài khoản đầu tư";
         }
 
+        //tạo tài khoản con
         public bool CreateSubAccount(SubAccount subAccount, out string message)
         {
             try
@@ -104,6 +110,7 @@ namespace AccountManagement.Services
             }
         }
 
+        //xoá tài khoản con
         public bool DeleteSubAccount(decimal subId, out string message)
         {
             if (!CheckSubAccountExists(subId, out message))
@@ -148,66 +155,116 @@ namespace AccountManagement.Services
             }
         }
 
-        public bool Deposit(string accountId, decimal subId, double amount, out string message)
+        //nạp tiền
+        public bool Deposit(decimal subId, double amount, out string message)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!CheckSubAccountExists(subId, out message))
+                {
+                    return false;
+                }
+
+                //lấy ra sub_account
+                var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+
+                //nạp tiền
+                subAccount.Deposit(amount);
+
+                //cập nhật vào db
+                var result = _subAccountRepo.UpdateSubAccount(subAccount);
+                if (!result)
+                {
+                    message = $"Nạp {amount.ToString("N0", new CultureInfo("vi-VN"))}đ vào tài khoản {subAccount.Name}";
+                    _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message));
+                    return false;
+                }
+                message = $"Nạp {amount.ToString("N0", new CultureInfo("vi-VN"))}đ vào tài khoản {subAccount.Name}";
+                _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, true, message));
+                return true;
+            }
+            catch (OracleException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 1400:
+                        message = "Thiếu dữ liệu yêu cầu (NOT NULL).";
+                        return false;
+
+                    case 904:
+                        message = "Tên cột không hợp lệ.";
+                        return false;
+
+                    default:
+                        message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = $"Lỗi hệ thống: {ex.Message}";
+                return false;
+            }
         }
 
-        public bool Withdraw(string accountId, decimal subId, double amount, out string message)
+        //rút tiền
+        public bool Withdraw(decimal subId, double amount, out string message)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!CheckSubAccountExists(subId, out message))
+                {
+                    return false;
+                }
+
+                //lấy ra sub_account
+                var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+
+                //rút tiền
+                subAccount.Withdraw(amount);
+
+                //cập nhật vào db
+                var result = _subAccountRepo.UpdateSubAccount(subAccount);
+                if (!result)
+                {
+                    message = $"Rút {amount.ToString("N0", new CultureInfo("vi-VN"))}đ khỏi tài khoản {subAccount.Name}";
+                    _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, false, message));
+                    return false;
+                }
+                message = $"Rút {amount.ToString("N0", new CultureInfo("vi-VN"))}đ khỏi tài khoản {subAccount.Name}";
+                _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, true, message));
+                return true;
+            }
+            catch (OracleException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 1400:
+                        message = "Thiếu dữ liệu yêu cầu (NOT NULL).";
+                        return false;
+
+                    case 904:
+                        message = "Tên cột không hợp lệ.";
+                        return false;
+
+                    default:
+                        message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = $"Lỗi hệ thống: {ex.Message}";
+                return false;
+            }
         }
 
+        //thanh toán lãi
         public bool PayInterest(string accountId, decimal subId, out string message)
         {
             throw new NotImplementedException();
         }
-
-
-        //public bool Deposit(string accountId, , string subId, double amount, out string message)
-        //{
-        //    try
-        //    {
-        //        if (amount <= 0)  //kiểm tra số tiền giao dịch <= 0
-        //        {
-        //            message = "Số tiền giao dịch phải lớn hơn 0.";
-        //            _loggerRepo.CreateLog(new LogEntry(accountId, subId, "Nạp tiền", amount, false, message));
-        //            return false;
-        //        }
-
-        //        //lấy ra tài khoản từ id truyền vào, nếu không tồn tại thì return false
-        //        var acc = _accountRepo.GetAccountById(accountId);
-        //        if (acc == null)
-        //        {
-        //            message = "Tài khoản chính không tồn tại.";
-        //            _loggerRepo.CreateLog(new LogEntry(accountId, subId, "Nạp tiền", amount, false, message));
-        //            return false;
-        //        }
-
-
-        //        //dùng .Find để tìm và lấy ra phần tử thoả mãn điều kiện trong ngoặc
-        //        //truyền vào StringComparison.OrdinalIgnoreCase trong Equals để so sánh không phân biệt hoa thường
-        //        //var sub = acc.SubAccounts.Find(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
-        //        var sub = acc.SubAccounts.FirstOrDefault(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
-        //        if (sub == null)
-        //        {
-        //            message = "Tài khoản con không tồn tại.";
-        //            _logger.Log(new LogEntry(accountId, subId, "Nạp tiền", amount, false, message));
-        //            return false;
-        //        }
-
-        //        sub.Deposit(amount);
-        //        _logger.Log(new LogEntry(accountId, subId, "Nạp tiền", amount, true));
-        //        message = "Nạp tiền thành công.";
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        message = "Lỗi nạp tiền: " + ex.Message;
-        //        _logger.Log(new LogEntry(accountId, subId, "Nạp tiền", amount, false, ex.Message));
-        //        return false;
-        //    }
-        //}
+     
 
         //public bool Withdraw(string accountId, string subId, double amount, out string message)
         //{
