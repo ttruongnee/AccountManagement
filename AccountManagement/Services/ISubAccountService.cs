@@ -32,6 +32,6 @@ namespace AccountManagement.Services
         bool Withdraw(decimal subId, double amount, out string message);
 
         //trả lãi
-        bool PayInterest(string accountId, decimal subId, out string message);
+        bool PayInterest(decimal subId, out string message);
     }
 }

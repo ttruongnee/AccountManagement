@@ -260,100 +260,60 @@ namespace AccountManagement.Services
         }
 
         //thanh toán lãi
-        public bool PayInterest(string accountId, decimal subId, out string message)
+        public bool PayInterest(decimal subId, out string message)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!CheckSubAccountExists(subId, out message))
+                {
+                    return false;
+                }
+
+                //lấy ra sub_account
+                var subAccount = _subAccountRepo.GetBySubAccountId(subId);               
+
+                double interest = subAccount.GetInterest();
+                if (interest <= 0)
+                {
+                    message = "Không có lãi để thanh toán.";
+                    _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
+                    return false;
+                }
+
+                subAccount.Deposit(interest); // dùng hàm nạp để cộng lãi
+                var result = _subAccountRepo.UpdateSubAccount(subAccount);
+                if (!result)
+                {
+                    message = $"Thanh toán {interest:N0}đ tiền lãi cho {subAccount.Name}.";
+                    _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
+                    return false;
+                }
+                message = $"Thanh toán {interest:N0}đ tiền lãi cho {subAccount.Name}.";
+                _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, true, message));
+                return true;
+            }
+            catch (OracleException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 1400:
+                        message = "Thiếu dữ liệu yêu cầu (NOT NULL).";
+                        return false;
+
+                    case 904:
+                        message = "Tên cột không hợp lệ.";
+                        return false;
+
+                    default:
+                        message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = $"Lỗi hệ thống: {ex.Message}";
+                return false;
+            }
         }
-     
-
-        //public bool Withdraw(string accountId, string subId, double amount, out string message)
-        //{
-        //    message = "";
-        //    try
-        //    {
-        //        if (amount <= 0)
-        //        {
-        //            message = "Số tiền phải lớn hơn 0.";
-        //            _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, false, message));
-        //            return false;
-        //        }
-
-        //        var acc = _accountService.GetAccount(accountId);
-        //        if (acc == null) 
-        //        { 
-        //            message = "Tài khoản chính không tồn tại."; 
-        //            _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, false, message)); 
-        //            return false; 
-        //        }
-
-        //        var sub = acc.SubAccounts.Find(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
-        //        if (sub == null) 
-        //        { 
-        //            message = "Tài khoản con không tồn tại."; 
-        //            _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, false, message)); 
-        //            return false; 
-        //        }
-
-        //        if (sub.Balance < amount)
-        //        {
-        //            message = "Số dư không đủ.";
-        //            _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, false, message));
-        //            return false;
-        //        }
-
-        //        sub.Withdraw(amount);
-        //        _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, true));
-        //        message = "Rút tiền thành công.";
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        message = "Lỗi rút tiền: " + ex.Message;
-        //        _logger.Log(new LogEntry(accountId, subId, "Rút tiền", amount, false, ex.Message));
-        //        return false;
-        //    }
-        //}
-
-        //public bool PayInterest(string accountId, string subId, out string message)
-        //{
-        //    message = "";
-        //    try
-        //    {
-        //        var acc = _accountService.GetAccount(accountId);
-        //        if (acc == null) 
-        //        { 
-        //            message = "Tài khoản chính không tồn tại."; 
-        //            _logger.Log(new LogEntry(accountId, subId, "Thanh toán lãi", null, false, message)); 
-        //            return false; 
-        //        }
-
-        //        var sub = acc.SubAccounts.Find(s => s.SubId.Equals(subId, StringComparison.OrdinalIgnoreCase));
-        //        if (sub == null) 
-        //        { 
-        //            message = "Tài khoản con không tồn tại."; 
-        //            _logger.Log(new LogEntry(accountId, subId, "Thanh toán lãi", null, false, message)); 
-        //            return false; 
-        //        }
-
-        //        double interest = sub.GetInterest();
-        //        if (interest <= 0) 
-        //        { 
-        //            message = "Không có lãi để thanh toán."; 
-        //            _logger.Log(new LogEntry(accountId, subId, "Thanh toán lãi", interest, false, message)); 
-        //            return false; 
-        //        }
-
-        //        sub.Deposit(interest); // deposit để cộng lãi
-        //        _logger.Log(new LogEntry(accountId, subId, "Thanh toán lãi", interest, true));
-        //        message = $"Đã thanh toán lãi {interest:N0}đ cho {sub.SubId}.";
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        message = "Lỗi thanh toán lãi: " + ex.Message;
-        //        _logger.Log(new LogEntry(accountId, subId, "Thanh toán lãi", null, false, ex.Message));
-        //        return false;
-        //    }
-        //}
     }
 }

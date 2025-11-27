@@ -138,5 +138,37 @@ namespace AccountManagement.Handlers
                 Console.WriteLine("Lỗi: " + msg);
         }
 
+        public void ShowInterest()
+        {
+            string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
+            var subaccs = _subAccountService.GetByAccountId(account_id);
+            if (subaccs.Count == 0)
+            {
+                Console.WriteLine($"Tài khoản {account_id} có tài khoản con");
+                return;
+            }
+            foreach (var s in subaccs)
+            {
+                Console.WriteLine($"- ID: {s.Key}\t Mã: {s.Value.Name}\t | Loại: {_subAccountService.GetSubAccountType(s.Value.Type)}\t | Số dư: {s.Value.Balance.ToString("N0", new CultureInfo("vi-VN"))}đ\t Lãi: {s.Value.GetInterest().ToString("N0", new CultureInfo("vi-VN"))}đ");
+
+            }
+        }
+        public void PayInterest()
+        {
+            ShowInterest();
+
+            double id = InputHelper.ReadPositiveDouble("Nhập ID tài khoản con cần thanh toán lãi: ");
+            var subacc = _subAccountService.GetBySubAccountId((decimal)id);
+            if (subacc == null)
+            {
+                Console.WriteLine($"Tài khoản con có ID {id} không tồn tại");
+                return;
+            }
+
+            if (_subAccountService.PayInterest((decimal)id, out string msg))
+                Console.WriteLine(msg);
+            else
+                Console.WriteLine("Lỗi: " + msg);
+        }
     }
 }

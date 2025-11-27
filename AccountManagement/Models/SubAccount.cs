@@ -12,7 +12,9 @@ namespace AccountManagement.Models
         public string Account_Id { get; }
         public string Name { get; }
         public string Type { get; }
-        public double InterestRate { get; }
+        //public double InterestRate { get; }
+        public double InterestRate => Type == "TK" ? 4.7 : 5.1;
+
 
         private double _balance;
         public double Balance
@@ -30,7 +32,7 @@ namespace AccountManagement.Models
             Name = name.ToUpper();
             Type = type;
             Balance = initialBalance;
-            InterestRate = Type.Equals("TK") ? 4.7 : 5.1;
+            //InterestRate = Type.Equals("TK") ? 4.7 : 5.1;
 
         }
 
