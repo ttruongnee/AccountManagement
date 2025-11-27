@@ -1,5 +1,6 @@
 ﻿using AccountManagement.Models;
 using AccountManagement.Repositories;
+using NLog;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.CodeDom;
@@ -12,6 +13,22 @@ namespace AccountManagement.Services
 {
     public class AccountService : IAccountService
     {
+        //dùng Logger của nlog
+        private static readonly Logger logger = LogManager.GetLogger("AccountService.Main");
+        //private static readonly Logger logger = LogManager.GetCurrentClassLogger(); nếu như này thì nó lấy luôn tên logger là tên class
+        private void Log(string accountId, decimal? subId, string action, double? amount, bool success, string note)
+        {
+            var logEvent = new LogEventInfo(LogLevel.Info, logger.Name, note);
+
+            logEvent.Properties["AccountId"] = accountId ?? "";
+            logEvent.Properties["SubId"] = subId?.ToString() ?? "";
+            logEvent.Properties["Action"] = action ?? "";
+            logEvent.Properties["Amount"] = amount?.ToString() ?? "";
+            logEvent.Properties["Success"] = success;
+
+            logger.Log(logEvent);
+        }
+
         private readonly AccountRepository _accountRepo;
         private readonly SubAccountRepository _subAccountRepo;
         private readonly LogEntryRepository _loggerRepo;
@@ -49,11 +66,18 @@ namespace AccountManagement.Services
                 if (!result)
                 {
                     message = "Không thể tạo tài khoản chính.";
+
+                    _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, false, message));
+                    Log(accountId, null, "Tạo tài khoản chính", null, false, message);
                     return false;
                 }
-                _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, "Tạo tài khoản chính thành công"));
 
                 message = "Tạo tài khoản chính thành công.";
+                //log cho db
+                _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
+                //log cho text file bằng nlog
+                Log(accountId, null, "Tạo tài khoản chính", null, true, message);
+
                 return true;
             }
             catch (OracleException ex)
@@ -62,28 +86,37 @@ namespace AccountManagement.Services
                 {
                     case 1:
                         message = "Tài khoản đã tồn tại.";
-                        return false;
+                        break;
 
                     case 1400:
                         message = "Thiếu dữ liệu yêu cầu (NOT NULL).";
-                        return false;
+                        break;
 
                     case 2291:
                         message = "Tài khoản cha không tồn tại.";
-                        return false;
+                        break;
 
                     case 904:
                         message = "Tên cột không hợp lệ.";
-                        return false;
+                        break;
 
                     default:
                         message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
-                        return false;
+                        break;
                 }
+                //log cho db
+                _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
+                //log cho text file bằng nlog
+                Log(accountId, null, "Tạo tài khoản chính", null, false, message);
+                return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
+                //log cho db
+                _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
+                //log cho text file bằng nlog
+                Log(accountId, null, "Tạo tài khoản chính", null, false, message);
                 return false;
             }
 
@@ -107,12 +140,11 @@ namespace AccountManagement.Services
                 if (blockedSub != null)
                 {
                     message = $"Không thể xóa: tài khoản con {blockedSub.Sub_Id} còn tiền.";
-                    _loggerRepo.CreateLog(new LogEntry(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, "Còn tiền trong tài khoản con"));
+                    _loggerRepo.CreateLog(new LogEntry(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message));
+                    Log(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message);
                     return false;
                 }
             }
-
-
             try
             {
                 var result = _accountRepo.DeleteAccount(accountId);
@@ -120,12 +152,14 @@ namespace AccountManagement.Services
                 {
                     message = $"Xoá tài khoản {accountId} thất bại.";
                     _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
+                    Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
                     return false;
                 }
                 
                 message = $"Xoá tài khoản {accountId} thành công.";
                 _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, true, message));
-                
+                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, true, message);
+
                 return true;
             }
             catch (OracleException ex)
@@ -134,16 +168,21 @@ namespace AccountManagement.Services
                 { 
                     case 2292:
                         message = "Không thể xóa tài khoản: còn tài khoản con liên quan (FK constraint).";
-                        return false;
+                        break;
 
                     default:
                         message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
-                        return false;
+                        break;
                 }
+                _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
+                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
+                return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
+                _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
+                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
                 return false;
             }           
         }
