@@ -13,6 +13,7 @@ namespace AccountManagement.Models
         public string Account_Id { get; }
         //string thì ngầm hiểu là có thể null nên không cần ? ở đầu
         public decimal? Sub_Id { get; }
+        public string Sub_Name { get; }
         public string Action { get; }
         public double? Amount { get; }
         public bool Success { get; }

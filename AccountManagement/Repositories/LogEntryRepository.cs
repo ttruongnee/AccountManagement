@@ -15,7 +15,12 @@ namespace AccountManagement.Repositories
         {
             using (var conn = OracleDb.GetConnection())
             {
-                string sql = "select * from logs";
+                string sql = @"SELECT 
+                                l.*,
+                                s.name AS sub_name
+                            FROM logs l
+                            LEFT JOIN sub_accounts s 
+                                ON l.sub_id = s.sub_id";
 
                 var logs = conn.Query<LogEntry>(sql);
                 return logs.ToList();

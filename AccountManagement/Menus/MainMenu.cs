@@ -12,12 +12,14 @@ namespace AccountManagement.Menus
     {
         private readonly AccountHandlers _accountHandlers;
         private readonly SubAccountHandlers _subHandlers;
+        private readonly LogHandlers _logHandlers;
         private readonly RatingMenu _ratingMenu;
 
-        public MainMenu(AccountHandlers accountHandlers, SubAccountHandlers subHandlers, RatingMenu ratingMenu)
+        public MainMenu(AccountHandlers accountHandlers, SubAccountHandlers subHandlers, LogHandlers logHandlers, RatingMenu ratingMenu)
         {
             _accountHandlers = accountHandlers;
             _subHandlers = subHandlers;
+            _logHandlers = logHandlers;
             _ratingMenu = ratingMenu;
         }
 
@@ -34,7 +36,7 @@ namespace AccountManagement.Menus
                 new MenuItem { Key = 7, Description = "Rút tiền", Action = _subHandlers.Withdraw },
                 new MenuItem { Key = 8, Description = "Tính lãi (hiển thị)", Action = _subHandlers.ShowInterest },
                 new MenuItem { Key = 9, Description = "Thanh toán lãi", Action = _subHandlers.PayInterest },
-                //new MenuItem { Key = 10, Description = "Xem lịch sử hoạt động", Action = _logHandlers.ShowLogs },
+                new MenuItem { Key = 10, Description = "Xem lịch sử hoạt động", Action = _logHandlers.ShowLogs },
                 new MenuItem { Key = 11, Description = "Xếp hạng account", Action = _ratingMenu.Show },
                 new MenuItem { Key = 0, Description = "Thoát", Action = () => Environment.Exit(0) },
             };

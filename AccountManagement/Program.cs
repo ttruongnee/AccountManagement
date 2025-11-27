@@ -32,15 +32,17 @@ namespace AccountManagement
 
             var accountService = new AccountService(accountRepo, subRepo, logRepo);
             var subAccountService = new SubAccountService(accountRepo, subRepo, logRepo);
+            var logService = new LoggerService(logRepo);
 
             var accountHandlers = new AccountHandlers(accountService, subAccountService);
             var subHandlers = new SubAccountHandlers(accountService, subAccountService);
+            var logHandlers = new LogHandlers(logService);
 
             //khi nào sửa rating phải kiểm tra câu này xem nên tạo service cho rating k
             var ratingHandlers = new RatingHandlers(accountService, subAccountService);
 
             var ratingMenu = new RatingMenu(ratingHandlers);
-            var mainMenu = new MainMenu(accountHandlers, subHandlers, ratingMenu);
+            var mainMenu = new MainMenu(accountHandlers, subHandlers, logHandlers, ratingMenu);
             mainMenu.Show();
         }     
     }
