@@ -22,10 +22,28 @@ namespace AccountManagement.Menus
         {
             var menuItems = new List<MenuItem>
             {
-                //new MenuItem { Key = 1, Description = "Xếp hạng tài khoản theo số dư", Action = () => RankAccountsByBalance(accountService) },
-                //new MenuItem { Key = 2, Description = "Các tài khoản số dư dưới 1 triệu", Action = () => Under1Million(accountService) },
-                //new MenuItem { Key = 3, Description = "Top 3 tài khoản có số dư thanh toán lớn nhất", Action = () => Top3(accountService) },
-                //new MenuItem { Key = 4, Description = "Tổng số dư tài khoản đầu tư của tất cả tài khoản", Action = () => TotalBalanceOfInvestmentAccounts(accountService) },
+                new MenuItem { 
+                    Key = 1, 
+                    Description = "Xếp hạng tài khoản theo số dư", 
+                    Action =  () => _ratingHandlers.RankAccountsByBalance(
+                                        _ratingHandlers.GetAccountsWithTotalBalance())
+                },
+                new MenuItem { 
+                    Key = 2, 
+                    Description = "Các tài khoản số dư dưới 1 triệu", 
+                    Action = () => _ratingHandlers.Under1Million(
+                                         _ratingHandlers.GetAccountsWithTotalBalance())
+                },
+                new MenuItem { 
+                    Key = 3, 
+                    Description = "Top 3 tài khoản có số dư thanh toán lớn nhất", 
+                    Action = () => _ratingHandlers.Top3(
+                                        _ratingHandlers.GetAccountsWithTotalBalance()) 
+                },
+                new MenuItem { Key = 4, 
+                    Description = "Tổng số dư tài khoản đầu tư của tất cả tài khoản", 
+                    Action = _ratingHandlers.TotalBalanceOfInvestmentAccounts 
+                },
                 new MenuItem { Key = 0, Description = "Thoát", Action = () => { } }
 
             };

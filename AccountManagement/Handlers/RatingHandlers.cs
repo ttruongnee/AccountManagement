@@ -20,56 +20,66 @@ namespace AccountManagement.Handlers
             _accountService = accountService;
             _subAccountService = subAccountService;
         }
-        //viết code vào service xong ở đây viết hàm k có para thôi
-        public void RankAccountsByBalance(IAccountService accountService)
-        {
-            //var dict = accountService.GetAllAccounts();
-            //if (dict.Count == 0) { return; }
-            //var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
-            //    .OrderByDescending(d => d.TotalBalance);
 
-            //foreach (var item in result)
-            //{
-            //    Console.WriteLine($"- {item.MainId.ToUpper()}\t | Tổng số dư: {item.TotalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
-            //}
+        public List<(string accountId, double totalBalance)> GetAccountsWithTotalBalance()
+        {
+            var dict_acc = _accountService.GetAllAccounts();
+            if (dict_acc.Count == 0) { return null; }
+
+            var ranking = new List<(string accountId, double totalBalance)>();  //viết như này sẽ tạo ValueTuple<string, double>
+            foreach (var account in dict_acc)
+            {
+                var dict_subacc = _subAccountService.GetByAccountId(account.Key);
+                double TotalBalance = 0;
+                if (dict_subacc != null)
+                {
+                    TotalBalance = dict_subacc.Values.Sum(s => s.Balance);
+                }
+
+                ranking.Add((account.Key, TotalBalance));
+            }
+            return ranking.OrderByDescending(a => a.totalBalance).ToList();
+        }
+        public void RankAccountsByBalance(List<(string accountId, double totalBalance)> ranking)
+        {
+            foreach (var acc in ranking)
+            {
+                if (ranking.Count == 0) { return; }
+
+                Console.WriteLine($"- Tài khoản: {acc.accountId}\t Tổng số dư: {acc.totalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
+            }
         }
 
-        public void Under1Million(IAccountService accountService)
+        public void Under1Million(List<(string accountId, double totalBalance)> ranking)
         {
-            //var dict = accountService.GetAllAccounts();
-            //if (dict.Count == 0) { return; }
-            //var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
-            //    .Where(acc => acc.TotalBalance < 1_000_000);
+            if (ranking.Count == 0) { return; }
+            var result = ranking.Where(acc => acc.totalBalance < 1_000_000);
 
-            //foreach (var item in result)
-            //{
-            //    Console.WriteLine($"- {item.MainId.ToUpper()}\t | Tổng số dư: {item.TotalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
-            //}
+            foreach (var acc in result)
+            {
+                Console.WriteLine($"- Tài khoản: {acc.accountId}\t Tổng số dư: {acc.totalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
+            }
         }
 
-        public void Top3(IAccountService accountService)
+        public void Top3(List<(string accountId, double totalBalance)> ranking)
         {
-            //var dict = accountService.GetAllAccounts();
-            //if (dict.Count == 0) { return; }
-            //var result = AccountHelpers.GetAccountsWithTotalBalance(accountService)
-            //    .OrderByDescending(acc => acc.TotalBalance)
-            //    .Take(3);
+            if (ranking.Count == 0) { return; }
+            var result = ranking.Take(3);
 
-            //foreach (var item in result)
-            //{
-            //    Console.WriteLine($"- {item.MainId.ToUpper()}\t | Tổng số dư: {item.TotalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
-            //}
+            foreach (var acc in result)
+            {
+                Console.WriteLine($"- Tài khoản: {acc.accountId}\t Tổng số dư: {acc.totalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
+            }
         }
 
-        public void TotalBalanceOfInvestmentAccounts(IAccountService accountService)
+        public void TotalBalanceOfInvestmentAccounts()
         {
-            //var dict = accountService.GetAllAccounts();
-            //if (dict.Count == 0) { return; }
-            //var result = dict.SelectMany(acc => acc.Value.SubAccounts)
-            //    .Where(acc => acc.Name == "Tài khoản đầu tư")
-            //    .Sum(acc => acc.Balance);
+            var dict_subacc = _subAccountService.GetAllSubAccounts();
+            double totalBalance = dict_subacc.Values
+                                    .Where(s => s.Type.Equals("DT"))
+                                    .Sum(s => s.Balance);
 
-            //Console.WriteLine($"Tổng số dư tài khoản đầu tư của tất cả tài khoản là {result.ToString("N0", new CultureInfo("vi-VN"))}đ");
+            Console.WriteLine($"Tổng số dư tài khoản đầu tư của tất cả tài khoản là {totalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");
         }
     }
 }

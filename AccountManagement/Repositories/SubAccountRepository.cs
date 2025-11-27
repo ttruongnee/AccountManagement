@@ -8,6 +8,21 @@ namespace AccountManagement.Repositories
 {
     public class SubAccountRepository
     {
+        public Dictionary<decimal, SubAccount> GetAllSubAccounts()
+        {
+            using (var conn = OracleDb.GetConnection())
+            {
+                string sql = "select * from sub_accounts";
+                var allsubs = conn.Query(sql);
+
+                var dict = new Dictionary<decimal, SubAccount>();
+                foreach (var sub in allsubs)
+                {
+                    dict.Add(sub.SUB_ID, new SubAccount(sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
+                }
+                return dict;
+            }
+        }
         public Dictionary<decimal, SubAccount> GetByAccountId(string accountId)
         {
             using (var conn = OracleDb.GetConnection())

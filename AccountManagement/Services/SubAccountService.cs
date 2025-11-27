@@ -24,6 +24,11 @@ namespace AccountManagement.Services
             _loggerRepo = logEntryRepository;
         }
 
+        public Dictionary<decimal, SubAccount> GetAllSubAccounts()
+        {
+            return _subAccountRepo.GetAllSubAccounts();
+        }
+
         //lấy ra dict subaccount từ accountid
         public Dictionary<decimal, SubAccount> GetByAccountId(string accountId)
         {

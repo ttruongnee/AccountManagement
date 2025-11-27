@@ -9,6 +9,8 @@ namespace AccountManagement.Services
 {
     public interface ISubAccountService
     {
+        Dictionary<decimal, SubAccount> GetAllSubAccounts();
+
         //lấy ra dict subaccounts theo account_id
         Dictionary<decimal, SubAccount> GetByAccountId(string accountId);
 
