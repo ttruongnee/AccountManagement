@@ -76,7 +76,7 @@ namespace AccountManagement.Handlers
         {
             var dict_subacc = _subAccountService.GetAllSubAccounts();
             double totalBalance = dict_subacc.Values
-                                    .Where(s => s.Type.Equals("DT"))
+                                    .Where(s => s.Type.Equals("ĐT"))
                                     .Sum(s => s.Balance);
 
             Console.WriteLine($"Tổng số dư tài khoản đầu tư của tất cả tài khoản là {totalBalance.ToString("N0", new CultureInfo("vi-VN"))}đ");

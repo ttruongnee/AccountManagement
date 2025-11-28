@@ -16,9 +16,10 @@ namespace AccountManagement.Services
         //dùng Logger của nlog
         private static readonly Logger logger = LogManager.GetLogger("AccountService.Main");
         //private static readonly Logger logger = LogManager.GetCurrentClassLogger(); nếu như này thì nó lấy luôn tên logger là tên class
-        private void Log(string accountId, decimal? subId, string action, double? amount, bool success, string note)
+        private void Log(LogLevel logLevel, string accountId, decimal? subId, string action, double? amount, bool success, string note)
         {
-            var logEvent = new LogEventInfo(LogLevel.Info, logger.Name, note);
+            var logEvent = new LogEventInfo(logLevel, logger.Name, note);
+            
 
             logEvent.Properties["AccountId"] = accountId ?? "";
             logEvent.Properties["SubId"] = subId?.ToString() ?? "";
@@ -68,7 +69,7 @@ namespace AccountManagement.Services
                     message = "Không thể tạo tài khoản chính.";
 
                     _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, false, message));
-                    Log(accountId, null, "Tạo tài khoản chính", null, false, message);
+                    Log(LogLevel.Info, accountId, null, "Tạo tài khoản chính", null, false, message);
                     return false;
                 }
 
@@ -76,7 +77,7 @@ namespace AccountManagement.Services
                 //log cho db
                 _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
                 //log cho text file bằng nlog
-                Log(accountId, null, "Tạo tài khoản chính", null, true, message);
+                Log(LogLevel.Info, accountId, null, "Tạo tài khoản chính", null, true, message);
 
                 return true;
             }
@@ -107,7 +108,7 @@ namespace AccountManagement.Services
                 //log cho db
                 _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
                 //log cho text file bằng nlog
-                Log(accountId, null, "Tạo tài khoản chính", null, false, message);
+                Log(LogLevel.Error, accountId, null, "Tạo tài khoản chính", null, false, message);
                 return false;
             }
             catch (Exception ex)
@@ -116,7 +117,7 @@ namespace AccountManagement.Services
                 //log cho db
                 _loggerRepo.CreateLog(new LogEntry(accountId, null, "Tạo tài khoản chính", null, true, message));
                 //log cho text file bằng nlog
-                Log(accountId, null, "Tạo tài khoản chính", null, false, message);
+                Log(LogLevel.Error, accountId, null, "Tạo tài khoản chính", null, false, message);
                 return false;
             }
 
@@ -141,7 +142,7 @@ namespace AccountManagement.Services
                 {
                     message = $"Không thể xóa: tài khoản con {blockedSub.Sub_Id} còn tiền.";
                     _loggerRepo.CreateLog(new LogEntry(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message));
-                    Log(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message);
+                    Log(LogLevel.Info, blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message);
                     return false;
                 }
             }
@@ -152,13 +153,13 @@ namespace AccountManagement.Services
                 {
                     message = $"Xoá tài khoản {accountId} thất bại.";
                     _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
-                    Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
+                    Log(LogLevel.Info, acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
                     return false;
                 }
                 
                 message = $"Xoá tài khoản {accountId} thành công.";
                 _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, true, message));
-                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, true, message);
+                Log(LogLevel.Info, acc.Account_Id, null, "Xoá tài khoản chính", null, true, message);
 
                 return true;
             }
@@ -175,14 +176,14 @@ namespace AccountManagement.Services
                         break;
                 }
                 _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
-                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
+                Log(LogLevel.Error, acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
                 return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
                 _loggerRepo.CreateLog(new LogEntry(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message));
-                Log(acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
+                Log(LogLevel.Error, acc.Account_Id, null, "Xoá tài khoản chính", null, false, message);
                 return false;
             }           
         }

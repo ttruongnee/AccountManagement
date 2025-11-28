@@ -16,9 +16,9 @@ namespace AccountManagement.Services
         //dùng Logger của nlog
         private static readonly Logger logger = LogManager.GetLogger("SubAccountService.Main");
         //private static readonly Logger logger = LogManager.GetCurrentClassLogger();   //tên logger là tên class
-        private void Log(string accountId, decimal? subId, string action, double? amount, bool success, string note)
+        private void Log(LogLevel logLevel, string accountId, decimal? subId, string action, double? amount, bool success, string note)
         {
-            var logEvent = new LogEventInfo(LogLevel.Info, logger.Name, note);
+            var logEvent = new LogEventInfo(logLevel, logger.Name, note);
 
             logEvent.Properties["AccountId"] = accountId ?? "";
             logEvent.Properties["SubId"] = subId?.ToString() ?? "";
@@ -96,12 +96,12 @@ namespace AccountManagement.Services
                 {
                     message = $"Tạo {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thất bại.";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message));
-                    Log(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
                     return false;
                 }
                 message = $"Tạo {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thành công.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, true, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, true, message);
                 return true;
             }
             catch (OracleException ex)
@@ -129,14 +129,14 @@ namespace AccountManagement.Services
                         break;
                 }
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
                 return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
                 return false;
             }
         }
@@ -155,7 +155,7 @@ namespace AccountManagement.Services
             {
                 message = $"{GetSubAccountType(subAccount.Type)} - {subAccount.Name.ToUpper()} vẫn còn tiền, không thể xoá.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
                 return false;
             }
 
@@ -167,13 +167,13 @@ namespace AccountManagement.Services
                 {
                     message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thất bại.";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
-                    Log(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
                     return false;
                 }
 
                 message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thành công.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message);
                 return true;
             }
             catch (OracleException ex)
@@ -187,7 +187,7 @@ namespace AccountManagement.Services
                     message = $"Lỗi CSDL {ex.Number}: {ex.Message}";
                 }
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
                 return false;
             }
         }
@@ -213,12 +213,12 @@ namespace AccountManagement.Services
                 {
                     message = $"Nạp {amount.ToString("N0", new CultureInfo("vi-VN"))}đ vào tài khoản {subAccount.Name}";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message));
-                    Log(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
                     return false;
                 }
                 message = $"Nạp {amount.ToString("N0", new CultureInfo("vi-VN"))}đ vào tài khoản {subAccount.Name}";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, true, message));
-                Log(subAccount.Account_Id, subId, "Nạp tiền", amount, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subId, "Nạp tiền", amount, true, message);
                 return true;
             }
             catch (OracleException ex)
@@ -238,14 +238,14 @@ namespace AccountManagement.Services
                         break;
                 }
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message));
-                Log(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
                 return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message));
-                Log(subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subId, "Nạp tiền", amount, false, message);
                 return false;
             }
         }
@@ -272,12 +272,12 @@ namespace AccountManagement.Services
                 {
                     message = $"Rút {amount.ToString("N0", new CultureInfo("vi-VN"))}đ khỏi tài khoản {subAccount.Name}";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, false, message));
-                    Log(subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
                     return false;
                 }
                 message = $"Rút {amount.ToString("N0", new CultureInfo("vi-VN"))}đ khỏi tài khoản {subAccount.Name}";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, true, message));
-                Log(subAccount.Account_Id, subId, "Rút tiền", amount, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subId, "Rút tiền", amount, true, message);
                 return true;
             }
             catch (OracleException ex)
@@ -297,14 +297,14 @@ namespace AccountManagement.Services
                         break;
                 }
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, false, message));
-                Log(subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
                 return false;
             }
             catch (Exception ex)
             {
                 message = $"Lỗi hệ thống: {ex.Message}";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subId, "Rút tiền", amount, false, message));
-                Log(subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subId, "Rút tiền", amount, false, message);
                 return false;
             }
         }
@@ -325,7 +325,7 @@ namespace AccountManagement.Services
             {
                 message = "Không có lãi để thanh toán.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
                 return false;
             }
 
@@ -338,12 +338,12 @@ namespace AccountManagement.Services
                 {
                     message = $"Thanh toán {interest:N0}đ tiền lãi cho {subAccount.Name}.";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
-                    Log(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
                     return false;
                 }
                 message = $"Thanh toán {interest:N0}đ tiền lãi cho {subAccount.Name}.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, true, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, true, message);
                 return true;
             }
             catch (OracleException ex)
@@ -363,13 +363,13 @@ namespace AccountManagement.Services
                         break;
                 }
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
                 return false;
             }
             catch (Exception ex)
             {
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message));
-                Log(subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
+                Log(LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
                 return false;
             }
         }
