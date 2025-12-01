@@ -140,7 +140,7 @@ namespace AccountManagement.Services
                 var blockedSub = subAccounts.Values.FirstOrDefault(s => s.Balance > 0);
                 if (blockedSub != null)
                 {
-                    message = $"Không thể xóa: tài khoản con {blockedSub.Sub_Id} còn tiền.";
+                    message = $"Không thể xóa: tài khoản con {blockedSub.Name} còn tiền.";
                     _loggerRepo.CreateLog(new LogEntry(blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message));
                     Log(LogLevel.Info, blockedSub.Account_Id, blockedSub.Sub_Id, "Xoá tài khoản chính", null, false, message);
                     return false;

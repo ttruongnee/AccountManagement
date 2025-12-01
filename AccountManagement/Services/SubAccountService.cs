@@ -56,16 +56,16 @@ namespace AccountManagement.Services
         }
 
         //lấy ra subaccount theo id
-        public SubAccount GetBySubAccountId(decimal sub_id)
+        public SubAccount GetBySubAccountId(string account_id, decimal sub_id)
         {
             if (sub_id <= 0) return null;
-            return _subAccountRepo.GetBySubAccountId(sub_id);
+            return _subAccountRepo.GetBySubAccountId(account_id, sub_id);
         }
 
         //kiểm tra subaccount có tồn tại hay không
-        public bool CheckSubAccountExists(decimal subId, out string message)
+        public bool CheckSubAccountExists(string account_id, decimal subId, out string message)
         {
-            var sub = _subAccountRepo.GetBySubAccountId(subId);
+            var sub = _subAccountRepo.GetBySubAccountId(account_id, subId);  //tìm theo cả thằng account_id nữa
 
             if (sub == null)
             {
@@ -142,14 +142,14 @@ namespace AccountManagement.Services
         }
 
         //xoá tài khoản con
-        public bool DeleteSubAccount(decimal subId, out string message)
+        public bool DeleteSubAccount(string account_id, decimal subId, out string message)
         {
-            if (!CheckSubAccountExists(subId, out message))
+            if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
             }
 
-            var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+            var subAccount = _subAccountRepo.GetBySubAccountId(account_id, subId);
 
             if (subAccount.Balance > 0)
             {
@@ -161,7 +161,7 @@ namespace AccountManagement.Services
 
             try
             {
-                var result = _subAccountRepo.DeleteSubAccount(subId);
+                var result = _subAccountRepo.DeleteSubAccount(account_id, subId);
 
                 if (!result)
                 {
@@ -193,15 +193,15 @@ namespace AccountManagement.Services
         }
 
         //nạp tiền
-        public bool Deposit(decimal subId, double amount, out string message)
+        public bool Deposit(string account_id, decimal subId, double amount, out string message)
         {
-            if (!CheckSubAccountExists(subId, out message))
+            if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
             }
 
             //lấy ra sub_account
-            var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+            var subAccount = _subAccountRepo.GetBySubAccountId(account_id, subId);
 
             //nạp tiền
             subAccount.Deposit(amount);
@@ -251,15 +251,15 @@ namespace AccountManagement.Services
         }
 
         //rút tiền
-        public bool Withdraw(decimal subId, double amount, out string message)
+        public bool Withdraw(string account_id, decimal subId, double amount, out string message)
         {
-            if (!CheckSubAccountExists(subId, out message))
+            if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
             }
 
             //lấy ra sub_account
-            var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+            var subAccount = _subAccountRepo.GetBySubAccountId(account_id, subId);
 
             //rút tiền
             subAccount.Withdraw(amount);
@@ -310,15 +310,15 @@ namespace AccountManagement.Services
         }
 
         //thanh toán lãi
-        public bool PayInterest(decimal subId, out string message)
+        public bool PayInterest(string account_id, decimal subId, out string message)
         {
-            if (!CheckSubAccountExists(subId, out message))
+            if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
             }
 
             //lấy ra sub_account
-            var subAccount = _subAccountRepo.GetBySubAccountId(subId);
+            var subAccount = _subAccountRepo.GetBySubAccountId(account_id, subId);
 
             double interest = subAccount.GetInterest();
             if (interest <= 0)

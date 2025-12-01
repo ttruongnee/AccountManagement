@@ -15,7 +15,7 @@ namespace AccountManagement.Services
         Dictionary<decimal, SubAccount> GetByAccountId(string accountId);
 
         //lấy ra subaccount theo sub_id
-        SubAccount GetBySubAccountId(decimal sub_id);
+        SubAccount GetBySubAccountId(string account_id, decimal sub_id);
 
         //lấy ra string kiểu tài khoản để hiển thị
         string GetSubAccountType(string type);
@@ -24,16 +24,16 @@ namespace AccountManagement.Services
         bool CreateSubAccount(SubAccount subAccount, out string message);
         
         //xoá
-        bool DeleteSubAccount(decimal subId, out string message);
+        bool DeleteSubAccount(string account_id, decimal subId, out string message);
 
 
         //gửi tiền
-        bool Deposit(decimal subId, double amount, out string message);
+        bool Deposit(string account_id, decimal subId, double amount, out string message);
         
         //rút tiền
-        bool Withdraw(decimal subId, double amount, out string message);
+        bool Withdraw(string account_id, decimal subId, double amount, out string message);
 
         //trả lãi
-        bool PayInterest(decimal subId, out string message);
+        bool PayInterest(string account_id, decimal subId, out string message);
     }
 }

@@ -8,7 +8,7 @@ namespace AccountManagement.Models
 {
     public class SubAccount
     {
-        public int Sub_Id { get; }
+        public int? Sub_Id { get; }
         public string Account_Id { get; }
         public string Name { get; }
         public string Type { get; }
@@ -26,14 +26,13 @@ namespace AccountManagement.Models
         public SubAccount() { }
 
         //khởi tạo 
-        public SubAccount(string account_Id, string name, string type, double initialBalance = 0)
+        public SubAccount(int? sub_Id, string account_Id, string name, string type, double initialBalance = 0)
         {
+            Sub_Id = sub_Id;
             Account_Id = account_Id;            
             Name = name.ToUpper();
             Type = type;
             Balance = initialBalance;
-            //InterestRate = Type.Equals("TK") ? 4.7 : 5.1;
-
         }
 
         public double GetInterest() => Balance * InterestRate / 100;

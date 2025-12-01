@@ -41,7 +41,7 @@ namespace AccountManagement.Handlers
             Console.Write("Số dư khởi tạo (nhập 0 nếu không): ");
             double.TryParse(Console.ReadLine(), out double initial);
 
-            SubAccount new_sub = new SubAccount(accountId, name.ToUpper(), type, initial);
+            SubAccount new_sub = new SubAccount(null ,accountId, name.ToUpper(), type, initial);
 
             //tạo tài khoản con
             _subAccountService.CreateSubAccount(new_sub, out var message);
@@ -50,7 +50,7 @@ namespace AccountManagement.Handlers
 
         public void DeleteSubAccount()
         {
-            string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
+            string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ").ToUpper();
             var subaccs = _subAccountService.GetByAccountId(account_id);
             if (subaccs.Count == 0)
             {
@@ -65,7 +65,7 @@ namespace AccountManagement.Handlers
             }
 
             double id = InputHelper.ReadPositiveDouble("Nhập ID tài khoản con cần xóa: ");
-            if (_subAccountService.DeleteSubAccount((decimal)id, out string msg))
+            if (_subAccountService.DeleteSubAccount(account_id, (decimal)id, out string msg))
                 Console.WriteLine(msg);
             else
                 Console.WriteLine("Lỗi: " + msg);
@@ -87,7 +87,7 @@ namespace AccountManagement.Handlers
             }
 
             double id = InputHelper.ReadPositiveDouble("Nhập ID tài khoản con cần nạp: ");
-            var subacc = _subAccountService.GetBySubAccountId((decimal)id);
+            var subacc = _subAccountService.GetBySubAccountId(account_id, (decimal)id);
             if (subacc == null)
             {
                 Console.WriteLine($"Tài khoản con có ID {id} không tồn tại");
@@ -95,7 +95,7 @@ namespace AccountManagement.Handlers
             }
 
             double amount = InputHelper.ReadPositiveDouble("Nhập số tiền cần nạp: ");
-            if (_subAccountService.Deposit((decimal)id, amount, out string msg))
+            if (_subAccountService.Deposit(account_id, (decimal)id, amount, out string msg))
                 Console.WriteLine(msg);
             else
                 Console.WriteLine("Lỗi: " + msg);
@@ -117,7 +117,7 @@ namespace AccountManagement.Handlers
             }
 
             double id = InputHelper.ReadPositiveDouble("Nhập ID tài khoản con cần rút: ");
-            var subacc = _subAccountService.GetBySubAccountId((decimal)id);
+            var subacc = _subAccountService.GetBySubAccountId(account_id, (decimal)id);
             if (subacc == null)
             {
                 Console.WriteLine($"Tài khoản con có ID {id} không tồn tại");
@@ -132,15 +132,15 @@ namespace AccountManagement.Handlers
                 return;
             }
 
-            if (_subAccountService.Withdraw((decimal)id, amount, out string msg))
+            if (_subAccountService.Withdraw(account_id, (decimal)id, amount, out string msg))
                 Console.WriteLine(msg);
             else
                 Console.WriteLine("Lỗi: " + msg);
         }
 
-        public void ShowInterest()
+        public void ShowInterest(string account_id)
         {
-            string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
+            //string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
             var subaccs = _subAccountService.GetByAccountId(account_id);
             if (subaccs.Count == 0)
             {
@@ -156,17 +156,24 @@ namespace AccountManagement.Handlers
 
         public void PayInterest()
         {
-            ShowInterest();
+            string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
+            ShowInterest(account_id);
+            var subaccs = _subAccountService.GetByAccountId(account_id);
+            if (subaccs.Count == 0)
+            {
+                Console.WriteLine($"Tài khoản {account_id} có tài khoản con");
+                return;
+            }
 
             double id = InputHelper.ReadPositiveDouble("Nhập ID tài khoản con cần thanh toán lãi: ");
-            var subacc = _subAccountService.GetBySubAccountId((decimal)id);
+            var subacc = _subAccountService.GetBySubAccountId(account_id, (decimal)id);
             if (subacc == null)
             {
                 Console.WriteLine($"Tài khoản con có ID {id} không tồn tại");
                 return;
             }
 
-            if (_subAccountService.PayInterest((decimal)id, out string msg))
+            if (_subAccountService.PayInterest(account_id, (decimal)id, out string msg))
                 Console.WriteLine(msg);
             else
                 Console.WriteLine("Lỗi: " + msg);

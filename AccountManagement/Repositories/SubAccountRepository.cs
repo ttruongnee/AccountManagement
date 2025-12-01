@@ -33,18 +33,18 @@ namespace AccountManagement.Repositories
                 var dict = new Dictionary<decimal, SubAccount>();
                 foreach (var sub in subs)
                 {
-                    dict.Add(sub.SUB_ID, new SubAccount(sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
+                    dict.Add(sub.SUB_ID, new SubAccount((int)sub.SUB_ID, sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
                 }
                 return dict;
             }
         }
 
-        public SubAccount GetBySubAccountId(decimal sub_id)
+        public SubAccount GetBySubAccountId(string account_id, decimal sub_id)
         {
             using (var conn = OracleDb.GetConnection())
             {
-                string sql = "select * from sub_accounts where sub_id = :sub_id";
-                var sub = conn.Query<SubAccount>(sql, new { sub_id });
+                string sql = "select * from sub_accounts where sub_id = :sub_id and account_id = :account_id";
+                var sub = conn.Query<SubAccount>(sql, new { sub_id, account_id});
                 
                 return sub.FirstOrDefault();
             }
@@ -73,12 +73,12 @@ namespace AccountManagement.Repositories
         }
 
         
-        public bool DeleteSubAccount(decimal subId)
+        public bool DeleteSubAccount(string account_id, decimal subId)
         {
             using (var conn = OracleDb.GetConnection())
             {
-                string sql = "delete from sub_accounts where sub_id = :subId";
-                var result = conn.Execute(sql, new { subId });
+                string sql = "delete from sub_accounts where sub_id = :subId and account_id = :account_id";
+                var result = conn.Execute(sql, new { account_id, subId });
 
                 return result > 0;  
             }

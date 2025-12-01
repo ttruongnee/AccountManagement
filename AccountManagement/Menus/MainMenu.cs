@@ -34,7 +34,16 @@ namespace AccountManagement.Menus
                 new MenuItem { Key = 5, Description = "Xóa tài khoản con", Action = _subHandlers.DeleteSubAccount },
                 new MenuItem { Key = 6, Description = "Nạp tiền", Action = _subHandlers.Deposit },
                 new MenuItem { Key = 7, Description = "Rút tiền", Action = _subHandlers.Withdraw },
-                new MenuItem { Key = 8, Description = "Tính lãi (hiển thị)", Action = _subHandlers.ShowInterest },
+                new MenuItem { 
+                    Key = 8, 
+                    Description = "Tính lãi (hiển thị)", 
+                    Action = () =>
+                    {
+                        string account_id = InputHelper.ReadNonEmpty("Nhập id tài khoản cha: ");
+                        _subHandlers.ShowInterest(account_id);
+
+                    }
+                },
                 new MenuItem { Key = 9, Description = "Thanh toán lãi", Action = _subHandlers.PayInterest },
                 new MenuItem { Key = 10, Description = "Xem lịch sử hoạt động", Action = _logHandlers.ShowLogs },
                 new MenuItem { Key = 11, Description = "Xếp hạng account", Action = _ratingMenu.Show },
