@@ -91,17 +91,18 @@ namespace AccountManagement.Services
         {
             try
             {
-                var result = _subAccountRepo.CreateSubAccount(subAccount);
+                var result = _subAccountRepo.CreateSubAccount(subAccount, out decimal newSubId);
+
                 if (!result)
                 {
                     message = $"Tạo {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thất bại.";
                     _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message));
-                    Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, false, message);
+                    Log(LogLevel.Info, subAccount.Account_Id, newSubId, "Tạo tài khoản con", null, false, message);
                     return false;
                 }
                 message = $"Tạo {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thành công.";
                 _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, true, message));
-                Log(LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, "Tạo tài khoản con", null, true, message);
+                Log(LogLevel.Info, subAccount.Account_Id, newSubId, "Tạo tài khoản con", null, true, message);
                 return true;
             }
             catch (OracleException ex)

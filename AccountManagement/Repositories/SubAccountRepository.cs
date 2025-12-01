@@ -3,6 +3,7 @@ using Dapper;
 using AccountManagement.Database;
 using AccountManagement.Models;
 using System.Linq;
+using System.Data;
 
 namespace AccountManagement.Repositories
 {
@@ -50,13 +51,22 @@ namespace AccountManagement.Repositories
             }
         }
 
-        public bool CreateSubAccount(SubAccount subAccount)
+        public bool CreateSubAccount(SubAccount subAccount, out decimal newSubId)
         {
             using (var conn = OracleDb.GetConnection())
             {
-                string sql = "insert into sub_accounts(name, account_id, balance, type) VALUES (:Name, :Account_Id, :Balance, :Type)";
-                var result = conn.Execute(sql, subAccount);  //tên property trong class phải trùng với tên parameter k thì phải new 1 đối tượng mới
+                string sql = "insert into sub_accounts(name, account_id, balance, type) VALUES (:Name, :Account_Id, :Balance, :Type) returning sub_id into :NewSub_Id";
+                var parameters = new DynamicParameters();
+                parameters.Add("Name", subAccount.Name);
+                parameters.Add("Account_Id", subAccount.Account_Id);
+                parameters.Add("Balance", subAccount.Balance);
+                parameters.Add("Type", subAccount.Type);
 
+                // Tham số output để nhận sub_id
+                parameters.Add("NewSub_Id", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+                var result = conn.Execute(sql, parameters);
+                newSubId = parameters.Get<decimal>("NewSub_Id"); // Lấy sub_id trả về
                 return result > 0;
             }
         }
