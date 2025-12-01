@@ -1,4 +1,5 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using AccountManagement.Utils;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
 
@@ -6,14 +7,15 @@ namespace AccountManagement.Database
 {
     public static class OracleDb
     {
-        private static string _connectionString =
-            "User Id=truong;Password=123;Data Source=localhost:1521/ORCLPDB";
+        // Lấy connection string đã giải mã từ appsettings.json
+        private static readonly string _connectionString =
+            ConfigurationHelper.GetDecryptedConnectionString();
 
         // Hàm trả về kết nối Oracle
         public static IDbConnection GetConnection()
         {
             return new OracleConnection(_connectionString);
         }
-    
+
     }
 }
